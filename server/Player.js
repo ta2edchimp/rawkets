@@ -10,7 +10,7 @@
  * @param {String} colour Colour of the player
  * @param {String} name Name of the player
  */
-var Player = function(id, x, y, angle, showFlame, colour, name) {
+var Player = function(id, x, y, angle, showFlame, colour, name, energy) {
 	this.id = id;
 	this.x = x;
 	this.y = y;
@@ -22,6 +22,7 @@ var Player = function(id, x, y, angle, showFlame, colour, name) {
 	this.showFlame = showFlame;
 	this.killCount = 0;
 	this.alive = false;
+	this.energy = energy;
 	
 	this.twitterAccessToken;
 	this.twitterAccessTokenSecret;
@@ -40,6 +41,6 @@ var Player = function(id, x, y, angle, showFlame, colour, name) {
  * @type Player
  * @returns An instance of Player.
  */
-exports.init = function(id, x, y, angle, showFlame, colour, name) {
-	return new Player(id, x, y, angle, showFlame, colour, name);
+exports.init = function(id, x, y, angle, showFlame, colour, name, energy) {
+	return new Player(id, x, y, angle, showFlame, colour, name, energy);
 }

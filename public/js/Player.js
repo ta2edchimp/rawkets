@@ -24,6 +24,8 @@ var Player = function(x, y) {
 	this.rocket = new Rocket();
 	this.sendUpdate = false;
 	this.teleport = false;
+	this.energy = 5; // energy points (currently only hit points)
+	this.originalEnergy = 5;
 };
 
 /**
@@ -150,10 +152,14 @@ Player.prototype.draw = function(ctx) {
 	ctx.font = "10px Courier";
 	
 	if (this.name) {
-		ctx.fillText(this.name+" | "+this.ping+"ms | "+this.killCount+" kills", this.rocket.pos.x+15, this.rocket.pos.y+2);
+		ctx.fillText(this.name+" | "+this.ping+"ms | "+this.killCount+" kills", this.rocket.pos.x+15, this.rocket.pos.y+10);
 	} else {
-		ctx.fillText(this.killCount+" kills", this.rocket.pos.x+15, this.rocket.pos.y+2);	
+		ctx.fillText(this.killCount+" kills", this.rocket.pos.x+15, this.rocket.pos.y+10);
 	};
+	
+	if (this.energy)  {
+		ctx.fillText(Math.floor(100 * this.energy / this.originalEnergy) + " %", this.rocket.pos.x+15, this.rocket.pos.y-2);
+	}
 };
 
 /**
@@ -236,6 +242,7 @@ Player.prototype.kill = function(viewport) {
 		setTimeout(function() {
 			self.rocket.colour = self.rocket.originalColour;
 			self.alive = true;
+			self.energy = self.originalEnergy; // reset energy
 			
 			if (viewport != undefined) {
 				self.allowedToShoot = true;

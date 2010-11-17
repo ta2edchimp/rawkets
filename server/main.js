@@ -140,6 +140,7 @@ function init() {
 					case MESSAGE_TYPE_NEW_PLAYER:
 						var colour = "rgb(0, 255, 0)";
 						var name = client.id;
+						var energy = 5;
 						
 						/*switch (client._req.socket.remoteAddress) {
 							case "213.104.213.216": // John
@@ -157,7 +158,7 @@ function init() {
 								break;
 						};*/
 						
-						var player = p.init(client.id, data.x, data.y, data.a, data.f, colour, name);
+						var player = p.init(client.id, data.x, data.y, data.a, data.f, colour, name, energy);
 										
 						player.twitterAccessToken = data.tat;
 						player.twitterAccessTokenSecret = data.tats;
@@ -208,7 +209,7 @@ function init() {
 								
 								client.send(formatMessage(MESSAGE_TYPE_SET_COLOUR, {i: client.id, c: player.colour}));			
 							
-								client.broadcast(formatMessage(MESSAGE_TYPE_NEW_PLAYER, {i: client.id, x: player.x, y: player.y, a: player.angle, c: player.colour, f: player.showFlame, n: player.name, k: player.killCount}));
+								client.broadcast(formatMessage(MESSAGE_TYPE_NEW_PLAYER, {i: client.id, x: player.x, y: player.y, a: player.angle, c: player.colour, f: player.showFlame, n: player.name, k: player.killCount, e: player.energy }));
 							
 								// Send data for existing players
 								if (players.length > 0) {
@@ -216,7 +217,7 @@ function init() {
 										if (players[playerId] == null)
 											continue;
 
-											client.send(formatMessage(MESSAGE_TYPE_NEW_PLAYER, {i: players[playerId].id, x: players[playerId].x, y: players[playerId].y, a: players[playerId].angle, f: players[playerId].showFlame, c: players[playerId].colour, n: players[playerId].name, k: players[playerId].killCount}));
+											client.send(formatMessage(MESSAGE_TYPE_NEW_PLAYER, {i: players[playerId].id, x: players[playerId].x, y: players[playerId].y, a: players[playerId].angle, f: players[playerId].showFlame, c: players[playerId].colour, n: players[playerId].name, k: players[playerId].killCount, e: players[playerId].energy}));
 									};
 								};
 								
@@ -249,7 +250,7 @@ function init() {
 								player.y = data.y;
 								player.angle = data.a;
 								player.showFlame = data.f;
-								client.broadcast(formatMessage(MESSAGE_TYPE_UPDATE_PLAYER, {i: client.id, x: data.x, y: data.y, a: data.a, f: data.f}));
+								client.broadcast(formatMessage(MESSAGE_TYPE_UPDATE_PLAYER, {i: client.id, x: data.x, y: data.y, a: data.a, f: data.f, e: data.e}));
 							} else {
 								//console.log("Player doesn't exist: ", client.id);
 							};
@@ -387,6 +388,12 @@ function sendBulletUpdates(bullets, socket) {
 				
 					// Bullet is within kill radius
 					if (d < 10) {
+						// deplete energy by 1
+						if (player.energy--) {
+							socket.broadcast(formatMessage(MESSAGE_TYPE_UPDATE_PLAYER, {i: player.id, x: player.x, y: player.y, a: data.a, f: data.f, e: data.e}));
+							break;
+						}
+						
 						socket.broadcast(formatMessage(MESSAGE_TYPE_KILL_PLAYER, {i: player.id}));
 						player.alive = false;
 						
