@@ -184,6 +184,9 @@ function init() {
 								};
 							
 								switch (player.name) {
+									case "ta2edchimp": // Andreas
+										colour = "rgb(0, 128, 255)";
+										break;
 									case "elliottkember": // Eliott
 										colour = "rgb(255, 0, 255)";
 										break;
